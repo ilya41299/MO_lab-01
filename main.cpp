@@ -232,7 +232,7 @@ void Simplex::Find_reference_solution()
 		std::cout << "This reference solution:" << std::endl;
 		for (unsigned i = 0; i < n - 1; i++) 
 		{
-			std::cout << "X" << x_basis[i] << " = " << table[i][0] ;
+			std::cout << "X" << x_basis[i] << " = " << 0 ;
 			if (i != n - 2) std::cout << ", ";
 		}
 		std::cout << std::endl;
