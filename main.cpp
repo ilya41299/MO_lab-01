@@ -209,14 +209,26 @@ int Simplex::result_row(unsigned res_col)
 
 void Simplex::Find_reference_solution()
 {
+	int row = -1;
+	int col = -1;
 	bool valid = false;
 	for (unsigned i = 0; i < n - 2; i++) {
-		if (table[i][0] < 0)
-			break;
-		else
-			valid = true;
+		if (table[i][0] < 0) 
+		{
+			row = i;
+			for (unsigned j = 1; j < m; j++) 
+			{
+				if (table[row][j] < 0) 
+				{
+					col = j;
+					break;
+				}
+			}
+			if (col != -1) break;
+		}
 	}
-	if (valid) {
+
+	if (row == -1) {
 		std::cout << "This reference solution:" << std::endl;
 		for (unsigned i = 0; i < n - 1; i++) 
 		{
@@ -226,6 +238,13 @@ void Simplex::Find_reference_solution()
 		std::cout << std::endl;
 		std::cout << "Fmax = " << table[n-1][0] << std::endl;
 	}
+
+	else if (row != -1 && col != -1) 
+	{
+		std::cout << "The solution does not exist"; 
+		exit(0);
+	}
+
 	else
 	{
 		unsigned res_col = result_column();
