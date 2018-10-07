@@ -7,7 +7,8 @@
 class Simplex {
 	double** table;
 	int n, m; // n - кол-во строк. m - Число столбцов c учётом ст. свободных членов и строки функции
-
+	int *x_free;
+	int *x_basis;
 	void print(); // вывод матрицы на экран
 	void Finding_the_optimal_solution(); // поиск оптимального решения
 	void check_flag(bool& flag); // проверка решения на оптимальность и возможность
@@ -43,9 +44,28 @@ Simplex::Simplex(const std::string name)
 	else
 		throw std::invalid_argument("An error has occured while reading input data");
 	fin.close();
+	//выделение памяти для строки и столбца свободных и базисных перепенных 
+	x_basis = new int[n - 1];
+	x_free = new int[m - 1];
+	for (unsigned j = 0; j < m-1; j++)
+	{
+		x_free[j] = m + j;
+	}
+	for (unsigned i=0; i < n - 1; i++)
+	{
+		x_basis[i] = i + 1;
+	}
 	std::cout << "Initial simplex table:" << std::endl;
 	print();
 	Finding_the_optimal_solution();
+	for (unsigned i = 0; i < n - 1; i++)
+	{
+		std::cout << "X" << x_basis[i] << " = " << table[i][0];
+		if (i != n - 2) std::cout << ", ";
+	}
+	std::cout << std::endl;
+	std::cout << "Fmax = " << -table[n - 1][0] << std::endl;
+	
 }
 
 Simplex::Simplex()
@@ -60,7 +80,9 @@ Simplex::~Simplex()
 	for (unsigned int i = 0; i < this->n; i++) {
 		delete[] this->table[i];
 	}
-	delete[] this->table;
+	delete[] table;
+	delete[] x_basis;
+	delete[] x_free;
 	n = 0;
 	m = 0;
 }
@@ -69,18 +91,26 @@ Simplex::~Simplex()
 
 void Simplex::print()
 {
-
-	for (std::size_t i = 0; i < m; ++i) {
+	std::cout << "	Si0";
+	for (unsigned i = 0; i < n - 1; i++)
+	{
+		std::cout << "	 X" << x_basis[i];
+	}
+	unsigned k = 0;
+	for (unsigned i = 0; i < m; ++i) {
+		
 		std::cout << '\n';
+		if (i != m - 1) { std::cout<< "X" << x_free[i] << "	"; }
+		else std::cout << "F	";
 		for (std::size_t j = 0; j < n; ++j) {
-			std::cout << table[i][j];
+			std::cout << (round(table[i][j] * 1000) / 1000) << "	";
+			k++;
 			if (j != n - 1) {
 				std::cout << ' ';
 			}
 		}
 	}
 	std::cout << std::endl << std::endl;
-		
 }
 void Simplex::Finding_the_optimal_solution()
 {
@@ -91,10 +121,9 @@ void Simplex::Finding_the_optimal_solution()
 	while (flag) {
 		res_col = result_column();
 		res_row = result_row(res_col);
-		//swap_res_row_col(res_row, res_col);
 		make_table(res_row, res_col);
 		check_flag(flag);
-		if(!flag) std::cout << "This is the optimal solution:" << std::endl;
+		if (!flag) std::cout << "This is the optimal solution:" << std::endl;
 		print();
 	}
 }
@@ -184,8 +213,17 @@ void Simplex::Find_reference_solution()
 		else
 			valid = true;
 	}
-	if (valid) std::cout << "This reference solution:" << std::endl;
-	else 
+	if (valid) {
+		std::cout << "This reference solution:" << std::endl;
+		for (unsigned i = 0; i < n - 1; i++) 
+		{
+			std::cout << "X" << x_basis[i] << " = " << table[i][0] ;
+			if (i != n - 2) std::cout << ", ";
+		}
+		std::cout << std::endl;
+		std::cout << "Fmax = " << table[n-1][0] << std::endl;
+	}
+	else
 	{
 		unsigned res_col = result_column();
 		unsigned res_row = result_row(res_col);
@@ -228,10 +266,11 @@ void Simplex::make_table(unsigned res_row, unsigned res_col)
 		delete[] new_table[i];
 	}
 	delete[] new_table;
+	std::swap(x_basis[res_row], x_free[res_col-1]);
 }
 
 int main()
 {
-	Simplex A("test.txt");
+	Simplex A("test_2.txt");
 	return 0;
 }
