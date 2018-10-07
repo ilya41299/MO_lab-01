@@ -153,15 +153,18 @@ void Simplex::check_flag(bool& flag)
 
 int Simplex::result_column()
 {
+
 	//если в столбце своб. чл. находим отрицательный элемент
 	//то идём по этой строке в поиске рез.ст(первого эл-та с отриц знач)
 	for (unsigned i = 0; i < n - 1; i++) {
 		if (table[i][0] < 0) {
-			for (unsigned j = 0; j < m; j++) {
+			for (unsigned j = 1; j < m; j++) {
 				if (table[i][j] < 0) {
 					return j;
 				}
 			}
+			std::cout <<"Target function is not limited";
+			exit(0);
 		}
 	}
 
@@ -271,6 +274,6 @@ void Simplex::make_table(unsigned res_row, unsigned res_col)
 
 int main()
 {
-	Simplex A("test_2.txt");
+	Simplex A("test.txt");
 	return 0;
 }
