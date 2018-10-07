@@ -60,7 +60,7 @@ Simplex::Simplex(const std::string name)
 	Finding_the_optimal_solution();
 	for (unsigned i = 0; i < n - 1; i++)
 	{
-		std::cout << "X" << x_basis[i] << " = " << table[i][0];
+		std::cout << "X" << x_free[i] << " = " << table[i][0];
 		if (i != n - 2) std::cout << ", ";
 	}
 	std::cout << std::endl;
